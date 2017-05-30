@@ -28,8 +28,8 @@ NieRAutomataMediaUtil::NieRAutomataMediaUtil(QWidget *parent)
     filemodel->setNameFilterDisables(false);
 
     fileview->setModel(filemodel);
-    //fileview->setRootIndex(filemodel->index("C:/Program Files (x86)/Steam/SteamApps/common/NieRAutomata"));
-    fileview->setRootIndex(filemodel->index("F:/Steam/SteamApps/common/NieRAutomata"));
+    fileview->setRootIndex(filemodel->index("C:/Program Files (x86)/Steam/SteamApps/common/NieRAutomata"));
+    //fileview->setRootIndex(filemodel->index("F:/Steam/SteamApps/common/NieRAutomata"));
     fileview->setColumnWidth(0, 400);
     fileview->setColumnWidth(1, 60);
     fileview->hideColumn(2);
