@@ -26,7 +26,11 @@ win32:RC_ICONS += NieRAutomata_MAINICON.ico
 
 SOURCES += main.cpp\
         nierautomatamediautil.cpp \
-    namtreeview.cpp
+    namtreeview.cpp \
+    namffplay_usm.cpp \
+    namffmpeg_usm.cpp \
+    filehandler_usm.cpp
 
 HEADERS  += nierautomatamediautil.h \
-    namtreeview.h
+    namtreeview.h \
+    namfilehandler.h
