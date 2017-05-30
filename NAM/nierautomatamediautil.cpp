@@ -156,11 +156,11 @@ void NieRAutomataMediaUtil::convert_ffmpeg(){
         }
     }
     ffmpeg = new QProcess;
-    QString command = QCoreApplication::applicationDirPath() + "/tools/ffmpeg.exe -f mpegvideo -hide_banner -i ";
-    command.append(info->absoluteFilePath() + " ");
+    QString command = "\"" + QCoreApplication::applicationDirPath() + "/tools/ffmpeg.exe\" -f mpegvideo -hide_banner -i ";
+    command.append("\"" + info->absoluteFilePath() + "\" ");
     command.append(extraFfmpegFlags->text());
     command.append(" -b:v " + outputBitrate->text() + " ");
-    command.append(outfile);
+    command.append("\"" + outfile + "\"");
     connect(ffmpeg, SIGNAL(readyReadStandardOutput()), this, SLOT(ffmpeg_readyOut()));
     connect(ffmpeg, SIGNAL(finished(int)), this, SLOT(ffmpeg_done()));
 
