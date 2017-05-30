@@ -1,7 +1,5 @@
 #include "nierautomatamediautil.h"
 
-#include <QTextStream>
-
 NieRAutomataMediaUtil::NieRAutomataMediaUtil(QWidget *parent)
     : QWidget(parent){
     QStringList fileFilters;
@@ -28,9 +26,7 @@ NieRAutomataMediaUtil::NieRAutomataMediaUtil(QWidget *parent)
     filemodel->setNameFilterDisables(false);
 
     fileview->setModel(filemodel);
-    //fileview->setRootIndex(filemodel->index("C:/Program Files (x86)/Steam/SteamApps/common/NieRAutomata"));
-    fileview->setRootIndex(filemodel->index("F:/Steam/SteamApps/common/NieRAutomata"));
-    //fileview->hideColumn(1);
+    fileview->setRootIndex(filemodel->index("C:/Program Files (x86)/Steam/SteamApps/common/NieRAutomata"));
     fileview->setColumnWidth(0, 400);
     fileview->setColumnWidth(1, 60);
     fileview->hideColumn(2);
@@ -40,8 +36,7 @@ NieRAutomataMediaUtil::NieRAutomataMediaUtil(QWidget *parent)
     fileview->setSortingEnabled(true);
     fileview->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    //dir = QString::fromUtf8("C:/");
-    dir = QString::fromUtf8("F:/Steam/SteamApps/common/NieRAutomata");
+    dir = QString::fromUtf8("C:/");
 
     layout->setContentsMargins(16, 16, 16, 16);
 
@@ -99,8 +94,7 @@ void NieRAutomataMediaUtil::fileSelect(const QModelIndex &index){
 
     if(info->suffix() == "usm"){
         type = 1;
-    }//else if(info->suffix() == "")
-    QTextStream out(stdout);
+    }
     switch(type){
         case 1:
             init_usm();
@@ -167,7 +161,6 @@ void NieRAutomataMediaUtil::convert_ffmpeg(){
     command.append(extraFfmpegFlags->text());
     command.append(" -b:v " + outputBitrate->text() + " ");
     command.append(outfile);
-    //connect(ffmpeg, SIGNAL(started()), this, SLOT(ffmpeg_started()));
     connect(ffmpeg, SIGNAL(readyReadStandardOutput()), this, SLOT(ffmpeg_readyOut()));
     connect(ffmpeg, SIGNAL(finished(int)), this, SLOT(ffmpeg_done()));
 
@@ -189,10 +182,6 @@ void NieRAutomataMediaUtil::convert_ffmpeg(){
 
     ffmpeg->start(command);
 }
-
-/*void NieRAutomataMediaUtil::ffmpeg_started(){
-    qDebug() << "started";
-}*/
 
 void NieRAutomataMediaUtil::ffmpeg_readyOut(){
     ffmpeg_stdoutstr.append(ffmpeg->readAllStandardOutput());
