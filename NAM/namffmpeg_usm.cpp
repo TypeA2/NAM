@@ -1,4 +1,3 @@
-#include "nierautomatamediautil.h"
 void NieRAutomataMediaUtil::convert_ffmpeg(){
     if(outputPath->text().isEmpty()){
         QMessageBox::warning(this, "ffmpeg conversion", "Output path not specified.");
