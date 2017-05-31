@@ -73,6 +73,7 @@ private:
     QPushButton *saveLog;
     QPushButton *closeStdout;
     QString outfile;
+    QPushButton *killFfmpeg;
 
     QString outputPathPersistent;
     QString outputFileNamePersistent;
@@ -84,6 +85,8 @@ private:
     QProcess *ffplay;
     QLineEdit *extraFfplayFlags;
     QString extraFfplayFlagsPersistent;
+
+    bool killed;
 
     void init_usm();
     void usm_convert();
@@ -109,6 +112,7 @@ private slots:
     void ffplay_started();
     void ffplay_done();
     void extra_ffplay_flags_changed(const QString &text);
+    void kill_ffmpeg();
 };
 
 #endif // NIERAUTOMATAMEDIAUTIL_H

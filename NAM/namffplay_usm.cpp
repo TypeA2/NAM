@@ -19,7 +19,7 @@ void NieRAutomataMediaUtil::play_with_ffplay(){
     ffplay = new QProcess;
     connect(ffplay, SIGNAL(finished(int)), this, SLOT(ffplay_done()));
     connect(ffplay, SIGNAL(started()), this, SLOT(ffplay_started()));
-    QString command = "\"" + QCoreApplication::applicationDirPath() + "/tools/ffplay.exe\" -f mpegvideo -hide_banner -autoexit ";
+    QString command = "\"" + QCoreApplication::applicationDirPath() + "/ffmpeg/bin/ffplay.exe\" -f mpegvideo -hide_banner -autoexit ";
     command.append(extraFfplayFlags->text());
     command.append(" -i \"" + info->absoluteFilePath() + "\" ");
     ffplay->start(command);
