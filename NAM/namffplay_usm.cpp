@@ -1,3 +1,5 @@
+#include "nierautomatamediautil.h"
+
 void NieRAutomataMediaUtil::usm_playback(){
     while(formRight->rowCount() > 4){
         formRight->removeRow(4);
@@ -71,7 +73,7 @@ void NieRAutomataMediaUtil::usm_convert(){
     formRight->addRow("Select directory:", destinationSelect);
     formRight->addRow("Output filename:", outputFileName);
     formRight->addRow("", fileNameHint);
-    formRight->addRow("Output bitrade:", outputBitrate);
+    formRight->addRow("Output bitrate:", outputBitrate);
     formRight->addRow("Extra FFmpeg flags", extraFfmpegFlags);
     formRight->addRow("", convertBtn);
 }

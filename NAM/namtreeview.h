@@ -4,13 +4,14 @@
 #include <QTreeView>
 
 class NAMTreeView : public QTreeView{
-Q_OBJECT
+    Q_OBJECT
 
 public:
     NAMTreeView();
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
+
 };
 
 #endif // NAMTREEVIEW_H

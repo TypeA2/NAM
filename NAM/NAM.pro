@@ -29,8 +29,20 @@ SOURCES += main.cpp\
     namtreeview.cpp \
     namffplay_usm.cpp \
     namffmpeg_usm.cpp \
-    filehandler_usm.cpp
+    filehandler_usm.cpp \
+    filehandler_wem.cpp \
+    namffmpeg_wem.cpp \
+    sidewidget_wsp.cpp \
+    convertdialog.cpp \
+    namconversion.cpp \
+    sidewidget_empty.cpp
 
 HEADERS  += nierautomatamediautil.h \
     namtreeview.h \
-    namfilehandler.h
+    namfilehandler.h \
+    sidewidget_wsp.h \
+    convertdialog.h \
+    namconversion.h \
+    sidewidget_empty.h
+
+DISTFILES +=

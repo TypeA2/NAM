@@ -1,3 +1,4 @@
+#include "nierautomatamediautil.h"
 void NieRAutomataMediaUtil::convert_ffmpeg(){
     if(outputPath->text().isEmpty()){
         QMessageBox::warning(this, "ffmpeg conversion", "Output path not specified.");
@@ -97,7 +98,7 @@ void NieRAutomataMediaUtil::ffmpeg_done(){
             ffmpeg_stdoutstr.append("ffmpeg finished.");
         }
     }else{
-        ffmpeg_stdoutstr.append("Failure");
+        ffmpeg_stdoutstr.append("output file not found");
     }
     ffmpeg_stdout->setText(ffmpeg_stdoutstr);
     ffmpeg_stdout->verticalScrollBar()->setValue(ffmpeg_stdout->verticalScrollBar()->maximum());
@@ -130,6 +131,7 @@ void NieRAutomataMediaUtil::save_ffmpeg_log(){
         QTextStream stream(&out);
         stream << ffmpeg_stdoutstr;
     }
+    out.close();
 }
 
 void NieRAutomataMediaUtil::output_path_changed(const QString &text){

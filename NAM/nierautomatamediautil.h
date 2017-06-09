@@ -26,6 +26,7 @@
 #include <QComboBox>
 
 #include "namtreeview.h"
+#include "sidewidget_empty.h"
 
 class NieRAutomataMediaUtil : public QWidget{
     Q_OBJECT
@@ -79,6 +80,8 @@ private:
     QString outputFileNamePersistent;
     QString outputBitratePersistent;
     QString extraFfmpegFlagsPersistent;
+    QString outputBitratePersistentAudio;
+    QString extraFfmpegFlagsPersistentAudio;
 
     QComboBox *convertOrPlay;
     QPushButton *usmPlayFFplay;
@@ -86,11 +89,31 @@ private:
     QLineEdit *extraFfplayFlags;
     QString extraFfplayFlagsPersistent;
 
+    QProcess *ww2ogg;
+    QString wemStdoutstr;
+    QDialog *wemConvertOut;
+    QTextEdit *wemOutLog;
+    QFormLayout *wemConvertLayout;
+    QGridLayout *wemConvertControls;
+    QPushButton *wemOpenOutFile;
+    QPushButton *wemOpenOutDir;
+    QPushButton *wemSaveLog;
+    QPushButton *wemCloseOut;
+    QPushButton *wemKillProcess;
+    QLabel *wemCurrentRunning;
+    QString wemTempFile;
+
     bool killed;
 
     void init_usm();
     void usm_convert();
     void usm_playback();
+
+    void init_wem();
+    void layout_wem();
+    void wem_killed();
+
+    void reset_outer();
 
 private slots:
     void open();
@@ -113,6 +136,19 @@ private slots:
     void ffplay_done();
     void extra_ffplay_flags_changed(const QString &text);
     void kill_ffmpeg();
+    void output_bitrate_changed_audio(const QString &text);
+    void extra_ffmpeg_flags_changed_audio(const QString &text);
+    void convert_wem_plain();
+    void wem_convert_out();
+    void wem_convert_ww2ogg_done();
+    void wem_convert_ww2ogg_started();
+    void wem_open_out_file();
+    void wem_open_out_dir();
+    void wem_save_log();
+    void wem_close_out();
+    void wem_kill_process();
+    void wem_convert_ffmpeg_started();
+    void wem_convert_ffmpeg_done();
 };
 
 #endif // NIERAUTOMATAMEDIAUTIL_H
