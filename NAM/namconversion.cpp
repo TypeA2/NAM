@@ -1,15 +1,11 @@
 #include "namconversion.h"
 
-NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStringList &outputInfo, bool m) : QDialog(){
-    this->initiator = parent;
+NAMConversion::NAMConversion(QList<QByteArray> &currentFileBlobs, QComboBox *&currentFileContents, QStringList &commands, QStringList &outputInfo, bool m) : QDialog(){
+    this->currentFileBlobs = currentFileBlobs;
+    this->currentFileContents = currentFileContents;
     this->commandList = commands;
     this->outputFileInfo = outputInfo;
     this->multi = m;
-
-    foreach(QString command, this->commandList){
-        this->commandQueue.append(command.split("\n")[0]);
-        this->commandQueue.append(command.split("\n")[1]);
-    }
 
     if(QDir(QCoreApplication::applicationDirPath() + "/Temp").exists()){
         QDir temp(QCoreApplication::applicationDirPath() + "/Temp");
@@ -24,7 +20,7 @@ NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStr
 
         out.open(QIODevice::WriteOnly);
 
-        out.write(this->initiator->currentFileBlobs[this->initiator->currentFileContents->currentIndex() - 1], (this->initiator->currentFileBlobs[this->initiator->currentFileContents->currentIndex() - 1].length()));
+        out.write(this->currentFileBlobs[this->currentFileContents->currentIndex() - 1], (this->currentFileBlobs[this->currentFileContents->currentIndex() - 1].length()));
 
         out.close();
 
@@ -48,9 +44,14 @@ NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStr
 
         this->isSecondProcess = false;
     }else{
+        foreach(QString command, this->commandList){
+            this->commandQueue.append(command.split("\n")[0]);
+            this->commandQueue.append(command.split("\n")[1]);
+        }
+
         this->currentMultiIndex = 0;
 
-        this->outputString = this->commandList[0].split("\n")[0] + "\n";
+        this->outputString = this->commandList[0].split("\n")[0] + "\n\n";
 
         for(int i = 0; i < this->outputFileInfo.length(); i++){
             QString file = this->outputFileInfo[i].split("\n")[1];
@@ -59,7 +60,7 @@ NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStr
 
             out.open(QIODevice::WriteOnly);
 
-            out.write(this->initiator->currentFileBlobs[i], (this->initiator->currentFileBlobs[i].length()));
+            out.write(this->currentFileBlobs[i], (this->currentFileBlobs[i].length()));
 
             out.close();
 
@@ -102,7 +103,7 @@ NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStr
     connect(this->saveOutputLogToFile, SIGNAL(released()), this, SLOT(saveOutputLogToFileSlot()));
     connect(this->closeOutputDialog, SIGNAL(released()), this, SLOT(closeOutputDialogSlot()));
 
-    QGridLayout *dialogControls = new QGridLayout;
+    this->dialogControls = new QGridLayout;
     dialogControls->addWidget(this->openDestinationFile, 1, 0, 1, 1);
     dialogControls->addWidget(this->openDestinationDirectory, 1, 1, 1, 1);
     dialogControls->addWidget(this->killCurrentProcess, 2, 0, 1, 1);
@@ -111,7 +112,7 @@ NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStr
 
     QBoxLayout *dialogLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     dialogLayout->addWidget(this->output);
-    dialogLayout->addLayout(dialogControls);
+    dialogLayout->addLayout(this->dialogControls);
 
     this->setLayout(dialogLayout);
     this->setModal(true);
@@ -122,7 +123,14 @@ NAMConversion::NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStr
 
 void NAMConversion::multiConversionsPartFinishedSlot(){
     this->currentMultiIndex += 1;
+
     this->multiConversions[this->currentMultiIndex]->start(this->commandQueue[this->currentMultiIndex]);
+
+    this->outputString.append("\n" + this->commandQueue[this->currentMultiIndex] + "\n");
+
+    if(this->currentMultiIndex % 2 == 0) this->outputString.append("\n");
+
+    this->multiConversionProgressBar->setValue(this->currentMultiIndex);
 }
 
 void NAMConversion::conversionFinishedSlot(){
@@ -139,6 +147,8 @@ void NAMConversion::conversionFinishedSlot(){
                 temp.remove(f);
             }
         }
+
+        this->multiConversionProgressBar->setValue(this->multiConversionProgressBar->maximum());
     }else if(this->commandList.length() == 1 || this->isSecondProcess == true){
         this->outputString.append(this->firstConversion->readAllStandardOutput());
 
@@ -238,6 +248,8 @@ void NAMConversion::killCurrentProcessSlot(){
         QFile::remove(QCoreApplication::applicationDirPath() + "/Temp/" + this->outputFileInfo[1] + ".ogg");
         QFile::remove(QCoreApplication::applicationDirPath() + "/Temp/" + this->outputFileInfo[1] + "_ww2ogg.ogg");
         QFile::remove(this->outputFileInfo[0] + "/" + this->outputFileInfo[1]);
+
+        this->openDestinationFile->setEnabled(true);
     }else{
         disconnect(this->multiConversions[this->currentMultiIndex], 0, 0, 0);
 
@@ -246,9 +258,18 @@ void NAMConversion::killCurrentProcessSlot(){
 
             while(this->multiConversions[this->currentMultiIndex]->state() != QProcess::NotRunning);
         }
+
+        foreach(QString outFile, this->outputFileInfo){
+            QString filename = outFile.split("\n")[1];
+
+            QFile::remove(QCoreApplication::applicationDirPath() + "/Temp/" + filename + ".ogg");
+            QFile::remove(QCoreApplication::applicationDirPath() + "/Temp/" + filename + "_ww2ogg.ogg");
+
+        }
+
+        QFile::remove(this->outputFileInfo[this->currentMultiIndex].split("\n").join("/"));
     }
 
-    this->openDestinationFile->setEnabled(true);
     this->openDestinationDirectory->setEnabled(true);
     this->killCurrentProcess->setEnabled(false);
     this->saveOutputLogToFile->setEnabled(true);
@@ -257,14 +278,18 @@ void NAMConversion::killCurrentProcessSlot(){
 
 void NAMConversion::openDestinationFileSlot(){
     if(this->multi == false){
-        QDesktopServices::openUrl(this->outputFileInfo[0] + "/" + this->outputFileInfo[1]);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(this->outputFileInfo[0] + "/" + this->outputFileInfo[1]));
     }else{
-        QDesktopServices::openUrl(this->outputFileInfo[0].split("\n").join("/"));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(this->outputFileInfo[0].split("\n").join("/")));
     }
 }
 
 void NAMConversion::openDestinationDirectorySlot(){
-    QDesktopServices::openUrl(this->outputFileInfo[0]);
+    if(this->multi == false){
+        QDesktopServices::openUrl(QUrl::fromLocalFile(this->outputFileInfo[0]));
+    }else{
+        QDesktopServices::openUrl(QUrl::fromLocalFile(this->outputFileInfo[0].split("\n")[0]));
+    }
 }
 
 void NAMConversion::start(){
@@ -279,6 +304,12 @@ void NAMConversion::start(){
     if(this->multi == false){
         this->firstConversion->start(this->commandList[0]);
     }else{
+        this->multiConversionProgressBar = new QProgressBar;
+
+        this->multiConversionProgressBar->setRange(0, this->commandQueue.length());
+
+        this->dialogControls->addWidget(this->multiConversionProgressBar, 4, 0, 1, 2);
+
         this->multiConversions[0]->start(this->commandQueue[0]);
     }
 }

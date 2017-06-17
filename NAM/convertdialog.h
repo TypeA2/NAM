@@ -12,6 +12,7 @@
 #include <QCoreApplication>
 
 #include "sidewidget_wsp.h"
+#include "sidewidget_bnk.h"
 
 class ConvertDialog : public QDialog{
     Q_OBJECT
@@ -19,10 +20,12 @@ signals:
     void startConversionSignal(QStringList commands, QStringList outputInfo);
 
 public:
-    ConvertDialog(int *type, SideWidget_WSP *parent);
+    ConvertDialog(QComboBox *currentFileContents, NieRAutomataMediaUtil *initiator, QFileInfo *info);
     ~ConvertDialog();
 
-    SideWidget_WSP *initiator;
+    QComboBox *currentFileContents;
+    NieRAutomataMediaUtil *initiator;
+    QFileInfo *info;
 
 
 private:

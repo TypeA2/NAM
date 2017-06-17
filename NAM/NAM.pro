@@ -35,14 +35,15 @@ SOURCES += main.cpp\
     sidewidget_wsp.cpp \
     convertdialog.cpp \
     namconversion.cpp \
-    sidewidget_empty.cpp
+    sidewidget_empty.cpp \
+    sidewidget_bnk.cpp
 
 HEADERS  += nierautomatamediautil.h \
     namtreeview.h \
-    namfilehandler.h \
     sidewidget_wsp.h \
     convertdialog.h \
     namconversion.h \
-    sidewidget_empty.h
+    sidewidget_empty.h \
+    sidewidget_bnk.h
 
 DISTFILES +=

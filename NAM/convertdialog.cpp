@@ -1,15 +1,17 @@
 #include "convertdialog.h"
 #include "namconversion.h"
 
-ConvertDialog::ConvertDialog(int *type, SideWidget_WSP *parent) : QDialog(){
-    this->initiator = parent;
+ConvertDialog::ConvertDialog(QComboBox *currentFileContents, NieRAutomataMediaUtil *initiator, QFileInfo *info) : QDialog(){
+    this->currentFileContents = currentFileContents;
+    this->initiator = initiator;
+    this->info = info;
 
     this->setModal(true);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowCloseButtonHint);
     this->setWindowTitle("File conversion");
     this->setFixedWidth(512);
 
-    if(type == 0) layoutAudioWwise();
+    layoutAudioWwise();
 }
 
 void ConvertDialog::layoutAudioWwise(){
@@ -29,10 +31,10 @@ void ConvertDialog::layoutAudioWwise(){
     startCloseButtons->addWidget(startConversionButton);
     startCloseButtons->addWidget(closeConvertDialogButton);
 
-    if(this->initiator->currentFileContents->currentIndex() == 0){
-        destinationDirectory = new QLineEdit(this->initiator->info->absolutePath());
-        destinationFilename = new QLineEdit("[%1]" + this->initiator->info->baseName() + ".wav");
-        ffmpegFlags = new QLineEdit("-hide_banner");
+    if(this->currentFileContents->currentIndex() == 0){
+        destinationDirectory = new QLineEdit(this->initiator->optsDefaultOutputDirectory);
+        destinationFilename = new QLineEdit(this->initiator->optsOutputName.arg("%1", this->info->baseName(), "wav"));
+        ffmpegFlags = new QLineEdit(this->initiator->optsFFmpegFlags);
 
         fileTypeHint->setText("<i>Changing file extension also changes file type, %1 marks file numbering</i>");
 
@@ -43,9 +45,9 @@ void ConvertDialog::layoutAudioWwise(){
         form->addRow("FFmpeg flags:", ffmpegFlags);
         form->addRow("", startCloseButtons);
     }else{
-        destinationDirectory = new QLineEdit(this->initiator->info->absolutePath());
-        destinationFilename = new QLineEdit("[" + QString::number(this->initiator->currentFileContents->currentIndex() - 1) + "]" + this->initiator->info->baseName() + ".wav");
-        ffmpegFlags = new QLineEdit("-hide_banner");
+        destinationDirectory = new QLineEdit(this->initiator->optsDefaultOutputDirectory);
+        destinationFilename = new QLineEdit(this->initiator->optsOutputName.arg(QString::number(this->currentFileContents->currentIndex() - 1), this->info->baseName(), "wav"));
+        ffmpegFlags = new QLineEdit(this->initiator->optsFFmpegFlags);
 
         form->addRow("Destination directory:", destinationDirectory);
         form->addRow("Select directory:", selectDestinationDirectory);
@@ -59,7 +61,7 @@ void ConvertDialog::layoutAudioWwise(){
 }
 
 void ConvertDialog::destinationDirectorySelected(){
-    QString directory = QFileDialog::getExistingDirectory(this, "Select destination directory", this->initiator->info->absolutePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString directory = QFileDialog::getExistingDirectory(this, "Select destination directory", this->info->absolutePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     if(!directory.isEmpty()) destinationDirectory->setText(directory);
 }
@@ -91,11 +93,17 @@ void ConvertDialog::startConversion(){
         while(!QDir().exists(QCoreApplication::applicationDirPath() + "/Temp"));
     }
 
-    if(this->initiator->currentFileContents->currentIndex() == 0){
-        int count = this->initiator->currentFileContents->count() - 1;
+    if(this->currentFileContents->currentIndex() == 0){
+        int count = this->currentFileContents->count() - 1;
 
         QStringList commands;
         QStringList outputInfo;
+
+        if(this->destinationFilename->text().count("%1") < 1){
+            QMessageBox::warning(this, "File conversion", "File numbering not specified.");
+
+            return;
+        }
 
         for(int i = 0; i < count; i++){
             if(QFile::exists(this->destinationDirectory->text() + "/" + this->destinationFilename->text().arg(i))){

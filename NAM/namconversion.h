@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QProgressBar>
 
 #include "sidewidget_wsp.h"
 
@@ -18,13 +19,19 @@ class NAMConversion : public QDialog{
     Q_OBJECT
 
 public:
-    NAMConversion(SideWidget_WSP *parent, QStringList &commands, QStringList &outputInfo, bool m = false);
+    NAMConversion(QList<QByteArray> &currentFileBlobs, QComboBox *&currentFileContents, QStringList &commands, QStringList &outputInfo, bool m);
     ~NAMConversion();
 
     void start();
 
 private:
+    QList<QByteArray> currentFileBlobs;
+    QComboBox *currentFileContents;
+
     SideWidget_WSP *initiator;
+
+    QGridLayout *dialogControls;
+
     QStringList commandList;
     QStringList outputFileInfo;
     QStringList commandQueue;
@@ -48,6 +55,8 @@ private:
     QPushButton *killCurrentProcess;
     QPushButton *saveOutputLogToFile;
     QPushButton *closeOutputDialog;
+
+    QProgressBar *multiConversionProgressBar;
 
 private slots:
     void openDestinationFileSlot();

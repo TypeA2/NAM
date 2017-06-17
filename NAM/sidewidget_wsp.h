@@ -27,10 +27,9 @@ public:
 
     QList<QByteArray> currentFileBlobs;
 
-private:
     NieRAutomataMediaUtil *initiator;
 
-    QPushButton *scanFileButton;
+private:
     QByteArray currentFileBlob;
 
 private slots:

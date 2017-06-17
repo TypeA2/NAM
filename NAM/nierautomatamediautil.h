@@ -24,6 +24,7 @@
 #include <QTextStream>
 #include <QDateTime>
 #include <QComboBox>
+#include <QSettings>
 
 #include "namtreeview.h"
 #include "sidewidget_empty.h"
@@ -35,120 +36,43 @@ public:
     NieRAutomataMediaUtil(QWidget *parent = 0);
     ~NieRAutomataMediaUtil();
 
+    QString optsGamePath;
+    QString optsOutputName;
+    QString optsFFmpegFlags;
+    QString optsDefaultOutputDirectory;
+
 private:
-    QWidget *dekaasvariabel;
     QBoxLayout *outer;
-    QGridLayout *layout;
     QFileSystemModel *filemodel;
     NAMTreeView *fileview;
-    QWidget *right;
-    QFormLayout *formRight;
 
     QMenu *fileMenu;
+
     QMenuBar *menuBar;
+
     QAction *openFolderAct;
     QAction *exitProgram;
-    QString dir;
-
-    QLabel *sFile;
-    QLabel *sFileType;
-    QLabel *desc;
+    QAction *optionsDialogAct;
 
     QFileInfo *info;
-    QPushButton *convertBtn;
-    QPushButton *destinationSelect;
-    QString outputDir;
-    QLineEdit *outputPath;
-    QLineEdit *outputFileName;
-    QLabel *fileNameHint;
-    QLineEdit *outputBitrate;
-    QLineEdit *extraFfmpegFlags;
-    QProcess *ffmpeg;
-    QDialog *ffmpeg_out;
-    QFormLayout *ffmpeg_out_layout;
-    QTextEdit *ffmpeg_stdout;
-    QString ffmpeg_stdoutstr;
-    QGridLayout *ffmpeg_out_controls;
-    QPushButton *openOutFile;
-    QPushButton *openOutDir;
-    QPushButton *saveLog;
-    QPushButton *closeStdout;
-    QString outfile;
-    QPushButton *killFfmpeg;
 
-    QString outputPathPersistent;
-    QString outputFileNamePersistent;
-    QString outputBitratePersistent;
-    QString extraFfmpegFlagsPersistent;
-    QString outputBitratePersistentAudio;
-    QString extraFfmpegFlagsPersistentAudio;
+    QDialog *optionsDialog;
 
-    QComboBox *convertOrPlay;
-    QPushButton *usmPlayFFplay;
-    QProcess *ffplay;
-    QLineEdit *extraFfplayFlags;
-    QString extraFfplayFlagsPersistent;
-
-    QProcess *ww2ogg;
-    QString wemStdoutstr;
-    QDialog *wemConvertOut;
-    QTextEdit *wemOutLog;
-    QFormLayout *wemConvertLayout;
-    QGridLayout *wemConvertControls;
-    QPushButton *wemOpenOutFile;
-    QPushButton *wemOpenOutDir;
-    QPushButton *wemSaveLog;
-    QPushButton *wemCloseOut;
-    QPushButton *wemKillProcess;
-    QLabel *wemCurrentRunning;
-    QString wemTempFile;
-
-    bool killed;
-
-    void init_usm();
-    void usm_convert();
-    void usm_playback();
-
-    void init_wem();
-    void layout_wem();
-    void wem_killed();
+    QLineEdit *optionsDefaultGamePath;
+    QLineEdit *optionsDefaultOutputName;
+    QLineEdit *optionsDefaultFFmpegFlags;
+    QLineEdit *optionsDefaultOutputDirectory;
 
     void reset_outer();
 
 private slots:
     void open();
+    void options();
     void fileSelect(const QModelIndex &index);
-    void proc_output_destination();
-    void convert_ffmpeg();
-    void ffmpeg_started();
-    void ffmpeg_readyOut();
-    void ffmpeg_done();
-    void open_out_file();
-    void open_out_dir();
-    void save_ffmpeg_log();
-    void close_stdout_widget();
-    void output_path_changed(const QString &text);
-    void output_bitrate_changed(const QString &text);
-    void extra_ffmpeg_flags_changed(const QString &text);
-    void convert_or_play_changed(int index);
-    void play_with_ffplay();
-    void ffplay_started();
-    void ffplay_done();
-    void extra_ffplay_flags_changed(const QString &text);
-    void kill_ffmpeg();
-    void output_bitrate_changed_audio(const QString &text);
-    void extra_ffmpeg_flags_changed_audio(const QString &text);
-    void convert_wem_plain();
-    void wem_convert_out();
-    void wem_convert_ww2ogg_done();
-    void wem_convert_ww2ogg_started();
-    void wem_open_out_file();
-    void wem_open_out_dir();
-    void wem_save_log();
-    void wem_close_out();
-    void wem_kill_process();
-    void wem_convert_ffmpeg_started();
-    void wem_convert_ffmpeg_done();
+    void selectDefaultGamePathSlot();
+    void selectDefaultOutputDirectorySlot();
+    void optionsSaveAndCloseSlot();
+
 };
 
 #endif // NIERAUTOMATAMEDIAUTIL_H
